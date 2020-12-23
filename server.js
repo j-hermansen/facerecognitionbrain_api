@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcrypt-nodejs');
 
 
 const app = express();
@@ -14,8 +15,7 @@ const database = {
         {
             id: '123',
             name: 'john',
-            email: 'john@email.com',
-            password: 'cookies',
+            email: 'john@gmail.com',
             entries: 0,
             joined: new Date()
         },
@@ -23,9 +23,15 @@ const database = {
             id: '124',
             name: 'sally',
             email: 'sally@email.com',
-            password: 'bananas',
             entries: 0,
             joined: new Date()
+        }
+    ],
+    login: [
+        {
+            id: '987',
+            has: '',
+            email: 'john@gmail.com'
         }
     ]
 }
@@ -35,6 +41,12 @@ app.get('/', (req, res) => {
 });
 
 app.post('/signin', (req, res) => {
+    bcrypt.compare("test", '$2a$10$20ajjSYqiroPQz5bvWENbOKi8odJ8c5UVWLF4.GWABQwBM21TXRLm', function(err, res) {
+        console.log('first guess', res);
+    });
+    bcrypt.compare("veggies", '$2a$10$20ajjSYqiroPQz5bvWENbOKi8odJ8c5UVWLF4.GWABQwBM21TXRLm', function(err, res) {
+        console.log('second guess', res);
+    });
     if (req.body.email === database.users[0].email && req.body.password === database.users[0].password) {
         res.json("SUCCESSFULLY SIGNED IN");
     } else {
@@ -44,6 +56,7 @@ app.post('/signin', (req, res) => {
 
 app.post('/register', (req, res) => {
     const { email, name, password } = req.body;
+
     database.users.push({
         id: '125',
         name: name,
@@ -83,6 +96,21 @@ app.post('/image', (req, res) => {
         res.status(400).json('Not found');
     }
 });
+
+bcrypt.hash("bacon", null, null, function(err, hash) {
+    // Store hash in your password DB.
+});
+
+// bcrypt.hash(password, null, null, function(err, hash) {
+//     console.log(hash);
+// });
+// // Load hash from your password DB.
+// bcrypt.compare("bacon", hash, function(err, res) {
+//     // res == true
+// });
+// bcrypt.compare("veggies", hash, function(err, res) {
+//     // res = false
+// });
 
 
 app.listen(3000, () => {
